@@ -1,23 +1,29 @@
-# JUnit Demo Project
+# 🧪 JUnit Demo Project
 
-This is a simple JUnit demo project built with Java and Maven to demonstrate unit testing in Java applications using the JUnit 5 testing framework.
+A simple Java project demonstrating **unit testing** using **JUnit 5** and **Maven**, ideal for learning test-driven development (TDD) in a Spring/Java ecosystem.
 
-## 🧪 What this project includes:
-- Basic unit tests using JUnit 5
-- Test lifecycle annotations (`@BeforeEach`, `@AfterEach`, etc.)
-- Assertions (`assertEquals`, `assertTrue`, etc.)
-- Maven-based project structure
-- Simple business logic class and its corresponding test class
+---
 
-## 🚀 Technologies Used
-- Java
-- JUnit 5
-- Maven
-- IntelliJ / VS Code / STS (any IDE)
+## 📌 Features
 
+- Basic JUnit 5 test cases  
+- Assertions and test lifecycle methods  
+- Maven integration  
+- Easy to extend with Spring Boot or custom business logic  
+
+---
+
+## 🛠️ Technologies Used
+
+- Java 17+  
+- JUnit 5  
+- Maven  
+- VS Code / IntelliJ / Spring Tool Suite (STS)  
+
+---
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repository
+### Clone the repo:
 ```bash
 git clone https://github.com/dev-muzzammil/junit-demo.git

@@ -1,4 +1,4 @@
-# 🧪 JUnit Demo Project
+# 🧪 JUnit Project
 
 A simple Java project demonstrating **unit testing** using **JUnit 5** and **Maven**, ideal for learning test-driven development (TDD) in a Spring/Java ecosystem.
 

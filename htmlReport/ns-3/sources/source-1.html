@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.user_information.Controller</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (com.example.user_information.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.4%
+  </span>
+  <span class="absValue">
+    (17/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.user_information.Controller;
+&nbsp;
+&nbsp;import org.slf4j.Logger;
+&nbsp;
+&nbsp;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.domain.Sort;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import com.example.user_information.ApiResponse;
+&nbsp;import com.example.user_information.DTO.UserRegisterDTO;
+&nbsp;import com.example.user_information.DTO.UserResponseDTO;
+&nbsp;import com.example.user_information.Service.UserService;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/user&quot;)
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;
+&nbsp;	@Autowired
+&nbsp;	private UserService userService;
+&nbsp;	
+&nbsp;	
+<b class="fc">&nbsp;	private static final Logger logger = LoggerFactory.getLogger(UserController.class);</b>
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;ApiResponse&lt;UserResponseDTO&gt;&gt; addUser( @Valid @RequestBody UserRegisterDTO dto,
+&nbsp;            HttpServletRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        ApiResponse&lt;UserResponseDTO&gt; response = userService.addUser(dto);</b>
+<b class="fc">&nbsp;        response.setPath(request.getRequestURI());</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;	public ResponseEntity&lt;Page&lt;UserResponseDTO&gt;&gt; getUsers(
+&nbsp;			@RequestParam(defaultValue = &quot;0&quot;) int page,
+&nbsp;			@RequestParam(defaultValue = &quot;10&quot;) int size,
+&nbsp;			@RequestParam(defaultValue = &quot;id&quot;) String sortBy,
+&nbsp;			@RequestParam(defaultValue = &quot;asc&quot;) String direction
+&nbsp;			) {		
+&nbsp;		
+<b class="fc">&nbsp;		logger.info(&quot;Fetching users: page = {}, size = {}, sortBy = {}, direction = {}&quot;, page, size, sortBy, direction);</b>
+&nbsp;
+<b class="pc">&nbsp;		Sort sort = direction.equalsIgnoreCase(&quot;desc&quot;) ?</b>
+<b class="nc">&nbsp;				Sort.by(sortBy).descending():</b>
+<b class="fc">&nbsp;				Sort.by(sortBy).ascending();	</b>
+&nbsp;		
+<b class="fc">&nbsp;		Pageable pageable = PageRequest.of(page, size, sort);</b>
+&nbsp;		
+<b class="fc">&nbsp;		Page&lt;UserResponseDTO&gt; dto = userService.getUsers(pageable);</b>
+&nbsp;		
+<b class="fc">&nbsp;		logger.info(&quot;Successfully fetched {} users&quot;, dto.getTotalElements());</b>
+&nbsp;		
+<b class="fc">&nbsp;		return ResponseEntity.ok(dto);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponseDTO&gt; getUserById(@PathVariable Long id) {
+<b class="fc">&nbsp;        UserResponseDTO dto = userService.getUserById(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(dto);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponseDTO&gt; updateUser(@PathVariable Long id,
+&nbsp;                                                      @Valid @RequestBody UserRegisterDTO dto) {
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok(userService.updateUser(id, dto));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteUser(@PathVariable Long id) {
+<b class="fc">&nbsp;        userService.deleteUserById(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.noContent().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-25 10:02</div>
+</div>
+</body>
+</html>

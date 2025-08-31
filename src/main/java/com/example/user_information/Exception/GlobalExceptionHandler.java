@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice  // This annotation ensures that this class will handle exceptions globally across all controllers
-
 public class GlobalExceptionHandler {
 	
 	

@@ -1,0 +1,324 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GlobalExceptionHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.user_information.Exception</a>
+</div>
+
+<h1>Coverage Summary for Class: GlobalExceptionHandler (com.example.user_information.Exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GlobalExceptionHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (5/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47.2%
+  </span>
+  <span class="absValue">
+    (17/36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.user_information.Exception;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;import com.example.user_information.ApiResponse;
+&nbsp;import com.example.user_information.Common.Status;
+&nbsp;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.MethodArgumentNotValidException;
+&nbsp;import org.springframework.web.bind.annotation.ExceptionHandler;
+&nbsp;import org.springframework.web.bind.annotation.RestControllerAdvice;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RestControllerAdvice  // This annotation ensures that this class will handle exceptions globally across all controllers
+&nbsp;
+<b class="fc">&nbsp;public class GlobalExceptionHandler {</b>
+&nbsp;	
+&nbsp;	
+&nbsp;	
+&nbsp;	// A helper method to construct the ApiResponse in a consistent format
+&nbsp;    private ApiResponse&lt;List&lt;String&gt;&gt; buildApiResponse(
+&nbsp;            int code,
+&nbsp;            Status status,
+&nbsp;            String message,
+&nbsp;            List&lt;String&gt; data,
+&nbsp;            String path,
+&nbsp;            LocalDateTime timestamp) {
+&nbsp;
+&nbsp;        // Build and return an ApiResponse object with all required details
+<b class="fc">&nbsp;        return new ApiResponse&lt;&gt;(</b>
+&nbsp;                code,  // HTTP status code (e.g., 400, 500)
+&nbsp;                status,  // Status (e.g., SUCCESS, FAIL, ERROR)
+&nbsp;                message,  // Message describing the result
+&nbsp;                data,  // List of error messages or relevant data
+&nbsp;                path,  // The endpoint (URL) that triggered the error
+&nbsp;                timestamp  // The timestamp of when the response was generated
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    
+&nbsp;    
+&nbsp;
+&nbsp;    // Handles validation errors (for example, when @Valid validation fails)
+&nbsp;    @ExceptionHandler(MethodArgumentNotValidException.class)
+&nbsp;    public ResponseEntity&lt;ApiResponse&lt;List&lt;String&gt;&gt;&gt; handleValidationException(
+&nbsp;            MethodArgumentNotValidException ex,
+&nbsp;            HttpServletRequest request) {
+&nbsp;    	    	
+&nbsp;        // Extract all error messages from the validation exceptions
+<b class="nc">&nbsp;        List&lt;String&gt; errors = ex.getBindingResult()</b>
+<b class="nc">&nbsp;                .getAllErrors()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .map(err -&gt; err.getDefaultMessage())  // Get the default message for each error</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());  // Collect all error messages into a list</b>
+&nbsp;
+<b class="nc">&nbsp;        log.warn(&quot;Method Argument Not Valid: {}&quot; , ex.getMessage());</b>
+&nbsp;        
+&nbsp;        // Return the response with the validation errors in a structured format
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(</b>
+<b class="nc">&nbsp;                buildApiResponse(</b>
+<b class="nc">&nbsp;                    HttpStatus.BAD_REQUEST.value(),  // HTTP Status Code 400 for bad request</b>
+&nbsp;                    Status.FAIL,  // Status FAIL as the validation failed
+&nbsp;                    &quot;Validation failed&quot;,  // Message to inform validation failed
+&nbsp;                    errors,  // List of error messages
+<b class="nc">&nbsp;                    request.getRequestURI(),  // Path of the request that triggered the error</b>
+<b class="nc">&nbsp;                    LocalDateTime.now()  // Timestamp when the error occurred</b>
+&nbsp;                ),
+&nbsp;                HttpStatus.BAD_REQUEST  // Return BAD_REQUEST HTTP status
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    
+&nbsp;    
+&nbsp;    
+&nbsp;    // Handles business logic errors (for example, when an email or phone number is already registered)
+&nbsp;    @ExceptionHandler(IllegalArgumentException.class)
+&nbsp;    public ResponseEntity&lt;ApiResponse&lt;List&lt;String&gt;&gt;&gt; handleIllegalArgument(
+&nbsp;            IllegalArgumentException ex,
+&nbsp;            HttpServletRequest request) {
+&nbsp;    	
+<b class="fc">&nbsp;        log.warn(&quot;Business validation failed: {}&quot; , ex.getMessage());</b>
+&nbsp;
+&nbsp;        // Return the response with the business validation error
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(</b>
+<b class="fc">&nbsp;                buildApiResponse(</b>
+<b class="fc">&nbsp;                    HttpStatus.BAD_REQUEST.value(),  // HTTP Status Code 400</b>
+&nbsp;                    Status.FAIL,  // Status FAIL for business logic errors
+&nbsp;                    &quot;Business validation failed&quot;,  // Message explaining the failure
+<b class="fc">&nbsp;                    List.of(ex.getMessage()),  // List containing the specific error message</b>
+<b class="fc">&nbsp;                    request.getRequestURI(),  // Path of the request that triggered the error</b>
+<b class="fc">&nbsp;                    LocalDateTime.now()  // Timestamp of when the error occurred</b>
+&nbsp;                ),
+&nbsp;                HttpStatus.BAD_REQUEST  // Return BAD_REQUEST HTTP status
+&nbsp;        );
+&nbsp;    }
+&nbsp;    
+&nbsp;    
+&nbsp;    
+&nbsp;    @ExceptionHandler(ResourceNotFoundException.class)
+&nbsp;    public ResponseEntity&lt;ApiResponse&lt;List&lt;String&gt;&gt;&gt; handleNotFound(ResourceNotFoundException ex,
+&nbsp;    		HttpServletRequest request){
+&nbsp;    	
+<b class="fc">&nbsp;    	log.warn(&quot;Resources Not Found: {}&quot; , ex.getMessage());</b>
+&nbsp;    	
+<b class="fc">&nbsp;    	return new ResponseEntity&lt;&gt;(</b>
+<b class="fc">&nbsp;    			buildApiResponse(</b>
+<b class="fc">&nbsp;    					HttpStatus.NOT_FOUND.value(),</b>
+&nbsp;    					Status.FAIL,
+&nbsp;    					&quot;Resources Not Found&quot;,
+<b class="fc">&nbsp;    					List.of(ex.getMessage()),</b>
+<b class="fc">&nbsp;    					request.getRequestURI(),</b>
+<b class="fc">&nbsp;    					LocalDateTime.now()</b>
+&nbsp;    					),
+&nbsp;    			HttpStatus.NOT_FOUND
+&nbsp;    			);
+&nbsp;    }
+&nbsp;    
+&nbsp;
+&nbsp;    // A catch-all handler for unexpected exceptions (e.g., server errors)
+&nbsp;    @ExceptionHandler(Exception.class)
+&nbsp;    public ResponseEntity&lt;ApiResponse&lt;List&lt;String&gt;&gt;&gt; handleUnexpectedException(
+&nbsp;            Exception ex,
+&nbsp;            HttpServletRequest request) {
+&nbsp;
+&nbsp;        // Print the stack trace for debugging purposes
+<b class="nc">&nbsp;        ex.printStackTrace();</b>
+&nbsp;        
+<b class="nc">&nbsp;        log.error(&quot;INTERNAL_SERVER_ERROR: {}&quot; , ex.getMessage());</b>
+&nbsp;
+&nbsp;        // Return the response for unexpected errors
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(</b>
+<b class="nc">&nbsp;                buildApiResponse(</b>
+<b class="nc">&nbsp;                    HttpStatus.INTERNAL_SERVER_ERROR.value(),  // HTTP Status Code 500 for internal server error</b>
+&nbsp;                    Status.ERROR,  // Status ERROR as this is an unexpected error
+&nbsp;                    &quot;Unexpected error occurred&quot;,  // Generic error message
+<b class="nc">&nbsp;                    List.of(&quot;Something went wrong&quot;),  // General error message indicating the failure</b>
+<b class="nc">&nbsp;                    request.getRequestURI(),  // Path of the request that triggered the error</b>
+<b class="nc">&nbsp;                    LocalDateTime.now()  // Timestamp when the error occurred</b>
+&nbsp;                ),
+&nbsp;                HttpStatus.INTERNAL_SERVER_ERROR  // Return INTERNAL_SERVER_ERROR HTTP status
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    
+&nbsp;            
+&nbsp;    
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;/*
+&nbsp;
+&nbsp;
+&nbsp;1. @RestControllerAdvice
+&nbsp;This annotation makes the GlobalExceptionHandler class globally handle exceptions for all controllers in the application. It catches exceptions and returns a custom response to the client.
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;2. handleValidationException Method
+&nbsp;This method handles validation errors. It listens for MethodArgumentNotValidException, which occurs when input validation fails (for example, when @Valid fails).
+&nbsp;
+&nbsp;The error messages from the validation are collected and returned in a list as part of the response.
+&nbsp;
+&nbsp;The response is wrapped in a ResponseEntity, with a status of HttpStatus.BAD_REQUEST (400) to indicate a client-side issue.
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;3. handleIllegalArgument Method
+&nbsp;This method handles business validation errors, such as when an argument passed to the method is invalid (e.g., duplicate email or phone number).
+&nbsp;
+&nbsp;The error message from the exception is returned as part of the response.
+&nbsp;
+&nbsp;The status is also BAD_REQUEST (400), as the client provided invalid input.
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;4. handleUnexpectedException Method
+&nbsp;This method is a catch-all handler for any other unexpected exceptions. For example, if a server-side error occurs.
+&nbsp;
+&nbsp;The status is set to INTERNAL_SERVER_ERROR (500), which indicates a server error.
+&nbsp;
+&nbsp;The exception&#39;s stack trace is printed for debugging purposes (though this should be logged in production).
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;5. buildApiResponse Method
+&nbsp;This is a helper method to standardize the response structure. It creates an ApiResponse object containing:
+&nbsp;
+&nbsp;The HTTP status code (e.g., 400 or 500).
+&nbsp;
+&nbsp;The status (SUCCESS, FAIL, ERROR).
+&nbsp;
+&nbsp;A message describing the result.
+&nbsp;
+&nbsp;A list of error messages or relevant data.
+&nbsp;
+&nbsp;The path (URL) of the request that caused the error.
+&nbsp;
+&nbsp;A timestamp indicating when the error occurred.
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;6. ApiResponse Class
+&nbsp;The ApiResponse class is a generic wrapper for API responses, allowing consistent formatting across the application.
+&nbsp;
+&nbsp;*/
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-25 10:02</div>
+</div>
+</body>
+</html>

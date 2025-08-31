@@ -12,9 +12,15 @@ import com.example.user_information.DTO.UserResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserService {
-	
-    ResponseEntity<ApiResponse<UserResponseDTO>> addUser(UserRegisterDTO dto, HttpServletRequest request);
-    
+
+    ApiResponse<UserResponseDTO> addUser(UserRegisterDTO dto);
+
     Page<UserResponseDTO> getUsers(Pageable pageable);
-    
+
+    UserResponseDTO getUserById(Long id);
+
+    UserResponseDTO updateUser(Long id, UserRegisterDTO dto);
+
+    void deleteUserById(Long id);
+
 }

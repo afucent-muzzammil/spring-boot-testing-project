@@ -21,9 +21,3 @@ A simple Java project demonstrating **unit testing** using **JUnit 5** and **Mav
 - VS Code / IntelliJ / Spring Tool Suite (STS)  
 
 ---
-
-## 🚀 Getting Started
-
-### Clone the repo:
-```bash
-git clone https://github.com/dev-muzzammil/junit-demo.git

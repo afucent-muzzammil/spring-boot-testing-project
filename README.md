@@ -1,23 +1,28 @@
-# 🧪 JUnit Project
+#  JUnit + Spring Boot Testing Project
 
-A simple Java project demonstrating **unit testing** and **integration testing** using **JUnit 5** and **Maven**, ideal for learning test-driven development (TDD) in a Spring/Java ecosystem.
-
----
-
-## 📌 Features
-
-- **Unit Testing:** Wrote test cases for **service** and **controller** layers using **JUnit 5** and **Mockito**, ensuring business logic and API endpoints behave as expected.  
-- **Integration Testing:** Implemented **top-to-bottom**, **bottom-to-top**, and **hybrid testing** approaches to verify end-to-end system interactions, including database operations, service workflows, and REST endpoints.  
-- Assertions, mocking, and test lifecycle methods  
-- Maven integration  
-- Easy to extend with Spring Boot or custom business logic  
+This project demonstrates how to implement testing in **Spring Boot applications** using **JUnit** and **Spring Test frameworks**.
 
 ---
 
-## 🛠️ Technologies Used
+## 🔹 Features
 
-- Java 17+  
-- JUnit 5  
-- Mockito  
-- Maven  
-- VS Code / IntelliJ / Spring Tool Suite (STS)  
+### 🧪 Unit Testing
+- Service layer unit tests with **mocking**
+- Controller layer unit tests with **MockMvc**
+
+### 🔗 Integration Testing
+- Full end-to-end tests with **H2 in-memory database**
+- Data persistence testing by posting and retrieving records
+- **Top-down approach** ensuring all layers work together
+
+---
+
+## 🔹 Learning Outcome
+This project strengthened my understanding of:
+
+- Writing unit tests for **isolated components**
+- Building integration tests that **simulate real scenarios**
+- Using **H2 database** to test persistence without external setup
+- Following **test-driven development (TDD)** practices for clean, reliable code
+
+---
